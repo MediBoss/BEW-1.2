@@ -1,0 +1,11 @@
+{
+  "name": "jeddit",
+  "version": "1.0.0",
+  "description": "A clone of Reddit built with Node, Express, and MongoDB",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Medi W. Assumani",
+  "license": "ISC"
+}
