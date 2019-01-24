@@ -7,12 +7,14 @@ const express = require("express")
       http = require("http")
       port = process.env.PORT || 3000
       app = express()
+      posts = require("./controllers/posts")
 
 
 // SETTING UP VIEWS AND MIDDLEWARE
 app.engine("handlebars", exphbs({ defaultLayout: 'main' }))
 app.set("view engine", "handlebars")
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(posts)
 
 app.get("/", (request, response) => {
   console.log("Hellow word")
