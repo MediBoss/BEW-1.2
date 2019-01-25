@@ -11,6 +11,9 @@ router.get("/posts/new", (request, response) => {
 // CREATE POST ENDPOINT
 router.post("/posts", (request, response) => {
   const post = new Post(request.body);
+  const currentDate = Date()
+  post.createdAt = currentDate
+  post.updatedAt = currentDate
   post.save((err, post) => {
     return response.redirect(`/`);
   })
@@ -19,7 +22,7 @@ router.post("/posts", (request, response) => {
 
 // SHOW SINGLE POST ENDPOINT
 router.get("/posts/:id", (request, response) => {
-  
+
 })
 
 // SHOW ALL POSTS ENDPOINT
