@@ -1,7 +1,22 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-module.exports = mongoose.model('Post', {
-  title: String,
-  url: String,
-  summary: String
+const PostSchema = new Schema({
+  title: { type: String, required: true },
+  url: { type: String, required: true },
+  summary: { type: String, required: true },
+  createdAt: { type: Date, required: false },
+  updatedAt: { type: Date, required: false }
 })
+
+PostSchema.pre("save", (next) => {
+  const now = new Date()
+  this.updatedAt = now
+
+  if(!this.createdAt){
+    this.createdAt = now
+  }
+  next()
+})
+
+module.exports = mongoose.model("Post", PostSchema);
