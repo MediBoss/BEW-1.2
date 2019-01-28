@@ -11,9 +11,6 @@ const express = require("express")
       require('./database/jeddit-db');
       posts = require("./controllers/posts")
 
-// DATABASE CONNECTION
- // mongoose.connect('mongodb://localhost/jeddit', {useNewUrlParser: true});
-
 
 // SETTING UP VIEWS AND MIDDLEWARE
 app.engine("handlebars", exphbs({ defaultLayout: 'main' }))
