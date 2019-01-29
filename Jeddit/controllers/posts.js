@@ -23,7 +23,7 @@ router.post("/posts", (request, response) => {
 
 // SHOW SINGLE POST ENDPOINT
 router.get("/posts/:id", (request, response) => {
-  Post.findById(request.params.id)
+  Post.findById(request.params.id).populate('comments')
     .then( (post) => {
       response.render("posts-show", { post })
     })

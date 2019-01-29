@@ -10,7 +10,7 @@ const express = require("express")
       app = express()
       require('./database/jeddit-db');
       posts = require("./controllers/posts")
-
+      comments = require("./controllers/comments")
 
 // SETTING UP VIEWS AND MIDDLEWARE
 app.engine("handlebars", exphbs({ defaultLayout: 'main' }))
@@ -19,6 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(expressValidator());
 app.use(posts)
+app.use(comments)
 
 app.get("/", (request, response) => {
   console.log("Hellow word")
