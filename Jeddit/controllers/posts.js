@@ -44,5 +44,16 @@ router.get("/posts", (request, response) => {
 })
 
 
+// SHOW ALL SUBREDDIT ENDPOINT
+router.get("/n/:subreddit", function(request, response){
+  Post.find( {subreddit: request.params.subreddit} )
+    .then( (posts) => {
+      response.render("posts-index", { posts })
+    })
+    .catch( (error) =>{
+      console.log(error);
+    })
+})
+
 
 module.exports = router
