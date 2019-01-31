@@ -9,6 +9,7 @@ const express = require("express")
       port = process.env.PORT || 3000
       app = express()
       require('./database/jeddit-db');
+      require('./controllers/auth.js')(app);
       posts = require("./controllers/posts")
       comments = require("./controllers/comments")
 
