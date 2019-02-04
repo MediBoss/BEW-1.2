@@ -20,11 +20,15 @@ router.post("/sign-up", function(request, response){
     response.redirect("/")
   })
   .catch( (error) => {
-
-    // Print and return a
     console.log(error.message)
     return response.status(400).send({ error: error })
   })
+})
+
+// ENDPOINT TO LOGOUT THE USER
+router.get("/sign-out", function(request, response){
+  response.clearCookie("nToken")
+  response.redirect("/")
 })
 
 module.exports = router;
