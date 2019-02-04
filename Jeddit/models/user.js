@@ -1,7 +1,11 @@
+//----------------------------------------------------------------
+// This File defines the User Model and its Methods.
+//----------------------------------------------------------------
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const Schema = mongoose.Schema;
 
+// The Schema defined with needed properties to be stored in Mongo
 const UserSchema = new Schema({
   createdAt: { type: Date },
   updatedAt: { type: Date },
@@ -11,25 +15,30 @@ const UserSchema = new Schema({
   username: { type: String, required: true }
 });
 
+// Class Method to save a user object
 UserSchema.pre("save", function(next) {
-  const now = new Date();
-  this.updatedAt = now;
+
+  // keeps track of the date account is created and updated
+  const now = new Date()
+  this.updatedAt = now
   if (!this.createdAt) {
-    this.createdAt = now;
+    this.createdAt = now
   }
 
-  // ENCRYPT PASSWORD
-  const user = this;
+  // Encrypt and Salt the User's Password
+  const user = this
   if (!user.isModified("password")) {
-    return next();
+    return next()
   }
+
+  // Generates a salted and hashed password for the user
   bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(user.password, salt, (err, hash) => {
-      user.password = hash;
-      next();
-    });
-  });
-});
+      user.password = hash
+      next()
+    })
+  })
+})
 
 // Checks if the re-entered password mathes the former
 UserSchema.methods.comparePassword = function(password, done) {
