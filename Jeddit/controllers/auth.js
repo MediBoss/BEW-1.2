@@ -16,6 +16,7 @@ module.exports = (app) => {
 
       // sets up a new token for the signed up user
       var token = jwt.sign({ _id: user._id}, process.env.SECRET, { expiresIn: "60 days"} )
+      response.cookie("nToken", token, { maxAge: 900000, httpOnly: true })
       response.redirect("/")
     })
     .catch( (error) => {
