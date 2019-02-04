@@ -20,7 +20,7 @@ module.exports = (app) => {
     })
     .catch( (error) => {
 
-      // Print and return a 
+      // Print and return a
       console.log(error.message)
       return response.status(400).send({ error: error })
     })
