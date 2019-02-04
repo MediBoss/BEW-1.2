@@ -1,29 +1,30 @@
-const User = require("../models/user")
 const jwt = require("jsonwebtoken")
+const express = require("express")
+const router = express.Router()
+const User = require("../models/user")
 
-module.exports = (app) => {
+// ENDPOINT TO RENDER THE SIGN UP FORM
+router.get("/sign-up", function(request, response){
+  response.render("sign-up")
+})
 
-  // ENDPOINT TO RENDER THE SIGN UP FORM
-  app.get("/sign-up", function(request, response){
-    response.render("sign-up")
+// ENDPOINT TO SIGN UP THE USER
+router.post("/sign-up", function(request, response){
+
+  const user = new User(request.body)
+  user.save().then( (user) => {
+    console.log(user);
+    // sets up a new token for the signed up user
+    var token = jwt.sign({ _id: user._id}, process.env.SECRET, { expiresIn: "60 days"} )
+    response.cookie("nToken", token, { maxAge: 900000, httpOnly: true })
+    response.redirect("/")
   })
+  .catch( (error) => {
 
-  // ENDPOINT TO SIGN UP THE USER
-  app.post("/sign-up", function(request, response){
-
-    const user = new User(request.body)
-    user.save().then( (user) => {
-
-      // sets up a new token for the signed up user
-      var token = jwt.sign({ _id: user._id}, process.env.SECRET, { expiresIn: "60 days"} )
-      response.cookie("nToken", token, { maxAge: 900000, httpOnly: true })
-      response.redirect("/")
-    })
-    .catch( (error) => {
-
-      // Print and return a
-      console.log(error.message)
-      return response.status(400).send({ error: error })
-    })
+    // Print and return a
+    console.log(error.message)
+    return response.status(400).send({ error: error })
   })
-}
+})
+
+module.exports = router;
