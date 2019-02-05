@@ -3,7 +3,12 @@ const express = require("express")
 const router = express.Router()
 const User = require("../models/user")
 
-// ENDPOINT TO RENDER THE SIGN UP FORM
+// ENDPOINT TO RENDER SIGN IN PAGE
+router.get("/sign-in", function(request, response){
+  response.render("sign-in")
+})
+// ENDPOINT TO SIGNIN THE USER
+// ENDPOINT TO RENDER THE SIGN UP PAGE
 router.get("/sign-up", function(request, response){
   response.render("sign-up")
 })
