@@ -1,3 +1,7 @@
+//--------------------------------------------------
+// This File Express Server that runs each modules
+//---------------------------------------------------
+
 // LOADING NEEDED MODULES
 require('dotenv').config()
 const express = require("express")
@@ -16,20 +20,46 @@ const express = require("express")
       comments = require("./controllers/comments")
       require('./database/jeddit-db');
 
-// SETTING UP VIEWS AND MIDDLEWARE
+// Constantly checks if the user is Autheticated
+var checkAuth = (request, response, next) => {
+  console.log("Checking authentication");
+  if (typeof request.cookies.nToken === "undefined" || request.cookies.nToken === null) {
+    request.user = null;
+    console.log("User Not Autheticated");
+  } else {
+    var token = request.cookies.nToken;
+    var decodedToken = jwt.decode(token, { complete: true }) || {};
+    request.user = decodedToken.payload;
+    console.log("User Fully Autheticated");
+  }
+
+  next();
+};
+
+// LOADING UP VIEWS AND MIDDLEWARE
 app.engine("handlebars", exphbs({ defaultLayout: 'main' }))
 app.set("view engine", "handlebars")
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(expressValidator())
 app.use(cookieParser())
+app.use(checkAuth)
+app.use(auth)
 app.use(posts)
 app.use(comments)
-app.use(auth)
 
+// ENDPOINT TO THE HOME PAGE
 app.get("/", (request, response) => {
-  console.log("Hellow word")
-})
+  var currentUser = request.user;
+
+  Post.find({})
+    .then(posts => {
+      response.render("posts-index", { posts, currentUser });
+    })
+    .catch(err => {
+      console.log(err.message);
+    });
+});
 
 // SERVER BOOTING UP
 app.listen(port)

@@ -9,16 +9,18 @@ router.get("/posts/new", (request, response) => {
 })
 
 // CREATE POST ENDPOINT
-router.post("/posts", (request, response) => {
+// CREATE
+router.post("/posts/new", (request, response) => {
+  if (request.user) {
+    var post = new Post(request.body);
 
-  const post = new Post(request.body);
-  const currentDate = Date()
-  post.createdAt = currentDate
-  post.updatedAt = currentDate
-  post.save((err, post) => {
-    return response.redirect(`/`);
-  })
-})
+    post.save(function(err, post) {
+      return response.redirect(`/`);
+    });
+  } else {
+    return response.status(401);
+  }
+});
 
 
 // SHOW SINGLE POST ENDPOINT
