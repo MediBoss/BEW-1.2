@@ -7,7 +7,35 @@ const User = require("../models/user")
 router.get("/sign-in", function(request, response){
   response.render("sign-in")
 })
+
 // ENDPOINT TO SIGNIN THE USER
+router.post("/sign-in", function(request, response){
+
+  // Gets the user's data from the login form
+  const username = request.body.username
+  const password = request.body.password
+
+  // Query the user in the database
+  User.findOne( { username }, "username password")
+    .then( (user) => {
+
+      // checks if something else beside user object is returned
+      if(!user){
+        return response.status(401).send({ message: "username or password is incorect" })
+      }
+      // Creates a token to keep the user logged in for 60 days
+      const token =  jwt.sign({ _id: user._id, username: user.username}, process.env.SECRET,{
+        expiresIn: "60 days"
+      })
+
+      // Sets a cookie in the browser for future references
+      response.cookie("nToken", token, { maxAge: 900000, httpOnly: true} )
+      response.redirect("/")
+    })
+    .catch( (error) =>{
+      console.log(error.message);
+    })
+})
 // ENDPOINT TO RENDER THE SIGN UP PAGE
 router.get("/sign-up", function(request, response){
   response.render("sign-up")
