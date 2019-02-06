@@ -40,7 +40,7 @@ router.post("/posts/new", (request, response) => {
 router.get("/posts/:id", (request, response) => {
 
   var currentUser = request.user
-  Post.findById(request.params.id).populate('comments').populate('author')
+  Post.findById(request.params.id).populate({ path: 'comments', populate: { path: 'author'}}).populate('author')
     .then( (post) => {
       response.render("posts-show", { post, currentUser })
     })

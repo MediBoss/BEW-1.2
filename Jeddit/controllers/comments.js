@@ -6,8 +6,8 @@ const express = require("express")
 // CREATE COMMENT ENDPOINT
 router.post("/posts/:postId/comments", function(request, response){
 
-  const comment = new Comment(request.body)
-  comment.author = request.body.user._id
+  var comment = new Comment(request.body)
+  comment.author = request.user._id
   comment.save()
     .then( (comment) => {
       return Post.findById(request.params.postId)
