@@ -12,7 +12,8 @@ const UserSchema = new Schema({
   firstname: { type: String, required: true},
   lastname: { type: String, required: true},
   password: { type: String, select: false },
-  username: { type: String, required: true }
+  username: { type: String, required: true },
+  posts: [{ type: Schema.Types. ObjectId, ref: "Post"}]
 });
 
 // Class Method to save a user object

@@ -7,10 +7,10 @@ const express = require("express")
 router.post("/posts/:postId/comments", function(request, response){
 
   const comment = new Comment(request.body)
+  comment.author = request.body.user._id
   comment.save()
     .then( (comment) => {
       return Post.findById(request.params.postId)
-      console.log(comment);
       response.redirect(`/`)
     })
     .then( (post) => {

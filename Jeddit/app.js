@@ -15,26 +15,13 @@ const express = require("express")
       http = require("http")
       port = process.env.PORT || 3000
       app = express()
+      checkAuth = require("./controllers/checkAuth")
       auth = require('./controllers/auth.js');
       posts = require("./controllers/posts")
       comments = require("./controllers/comments")
-      require('./database/jeddit-db');
+      require('./database/jeddit-db')
+      require("./controllers/checkAuth")
 
-// Constantly checks if the user is Autheticated
-var checkAuth = (request, response, next) => {
-  console.log("Checking authentication");
-  if (typeof request.cookies.nToken === "undefined" || request.cookies.nToken === null) {
-    request.user = null;
-    console.log("User Not Autheticated");
-  } else {
-    var token = request.cookies.nToken;
-    var decodedToken = jwt.decode(token, { complete: true }) || {};
-    request.user = decodedToken.payload;
-    console.log("User Fully Autheticated");
-  }
-
-  next();
-};
 
 // LOADING UP VIEWS AND MIDDLEWARE
 app.engine("handlebars", exphbs({ defaultLayout: 'main' }))
@@ -51,8 +38,8 @@ app.use(comments)
 // ENDPOINT TO THE HOME PAGE
 app.get("/", (request, response) => {
   var currentUser = request.user;
-
-  Post.find({})
+  console.log(request.cookies);
+  Post.find().populate('author')
     .then(posts => {
       response.render("posts-index", { posts, currentUser });
     })
