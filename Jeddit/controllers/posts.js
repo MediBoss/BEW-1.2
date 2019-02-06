@@ -13,7 +13,6 @@ router.get("/posts/new", (request, response) => {
 // CREATE
 router.post("/posts/new", (request, response) => {
   if (request.user) {
-    console.log(request.user);
     var post = new Post(request.body);
     post.author = request.user._id
     console.log(post.author);
