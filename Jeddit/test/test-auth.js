@@ -36,4 +36,24 @@ it("should be able to signup", function(done) {
       });
   });
 });
+// test login
+it("should be able to login", function(done) {
+  agent
+    .post("/sign-in")
+    .send({ username: "testone", password: "password" })
+    .end(function(err, res) {
+      res.should.have.status(200);
+      agent.should.have.cookie("nToken");
+      done();
+    });
+});
+
+// test logout
+it("should be able to logout", function(done) {
+  agent.get("/sign-out").end(function(err, res) {
+    res.should.have.status(200);
+    agent.should.not.have.cookie("nToken");
+    done();
+  });
+});
 })
