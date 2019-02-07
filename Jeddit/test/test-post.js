@@ -3,6 +3,7 @@ const chaiHttp = require('chai-http');
 const server = require('../app');
 const should = chai.should();
 const Post = require('../models/post');
+const agent = chai.request.agent(app);
 
 chai.use(chaiHttp);
 
@@ -11,7 +12,25 @@ const newPost = {
     title: 'post title',
     url: 'https://www.google.com',
     summary: 'post summary',
+}
+
+const user = {
+    username: 'poststest',
+    password: 'testposts'
 };
+
+before(function (done) {
+  agent
+    .post('/sign-up')
+    .set("content-type", "application/x-www-form-urlencoded")
+    .send(user)
+    .then(function (res) {
+      done();
+    })
+    .catch(function (err) {
+      done(err);
+    });
+});
 
 describe('Posts', () => {
   after(() => {
@@ -65,5 +84,26 @@ describe('Posts', () => {
                     done();
                 });
         });
+    });
+
+    // Cleaning up dummy data after testing and closing agent
+    after(function (done) {
+      Post.findOneAndDelete(newPost)
+      .then(function (res) {
+          agent.close()
+
+          User.findOneAndDelete({
+              username: user.username
+          })
+            .then(function (res) {
+                done()
+            })
+            .catch(function (err) {
+                done(err);
+            });
+      })
+      .catch(function (err) {
+          done(err);
+      });
     });
 });
