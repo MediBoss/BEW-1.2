@@ -1,3 +1,7 @@
+//------------------/
+// The Posts Model  /
+//------------------/
+
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Populate = require("../utils/autoPopulate")
@@ -8,6 +12,9 @@ const PostSchema = new Schema({
   url: { type: String, required: true },
   summary: { type: String, required: true },
   subreddit: { type: String, required: true},
+  upVotes : [{ type: Schema.Types.ObjectId, ref: "User"}],
+  downVotes : [{ type: Schema.Types.ObjectId, ref: "User"}],
+  voteScore : {type: Number},
   comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
   createdAt: { type: Date},
   updatedAt: { type: Date}

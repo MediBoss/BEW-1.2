@@ -10,8 +10,16 @@ router.get("/posts/new", (request, response) => {
 })
 
 // CREATE POST ENDPOINT
-// CREATE
 router.post("/posts/new", (request, response) => {
+
+  // Initial values of the new post object created
+  var post = new Post(request.body);
+  post.author = request.user._id;
+  post.upVotes = [];
+  post.downVotes = [];
+  post.voteScore = 0;
+
+
   if (request.user) {
     var post = new Post(request.body);
     post.author = request.user._id
@@ -72,5 +80,26 @@ router.get("/n/:subreddit", function(request, response){
     })
 })
 
+// VOTE UP ENDPOINT
+router.put("/posts/:id/vote-up", function(request, response) {
+  Post.findById(request.params.id).exec(function(err, post) {
+    post.upVotes.push(request.user._id);
+    post.voteScore = post.voteScore + 1;
+    post.save();
+    console.log("voted up");
+    response.status(200);
+  });
+});
+
+// VOTE DOWN ENDPOINT
+router.put("/posts/:id/vote-down", function(request, response) {
+  Post.findById(req.params.id).exec(function(err, post) {
+    post.downVotes.push(request.user._id);
+    post.voteScore = post.voteScore - 1;
+    post.save();
+    console.log("voted down");
+    response.status(200);
+  });
+});
 
 module.exports = router

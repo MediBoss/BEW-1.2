@@ -1,5 +1,5 @@
 //--------------------------------------------------
-// This File Express Server that runs each modules
+// The Express App that runs each modules
 //---------------------------------------------------
 
 // LOADING NEEDED MODULES
@@ -26,6 +26,7 @@ const express = require("express")
 // LOADING UP VIEWS AND MIDDLEWARE
 app.engine("handlebars", exphbs({ defaultLayout: 'main' }))
 app.set("view engine", "handlebars")
+app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(expressValidator())
