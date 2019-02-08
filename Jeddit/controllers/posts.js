@@ -93,7 +93,7 @@ router.put("/posts/:id/vote-up", function(request, response) {
 
 // VOTE DOWN ENDPOINT
 router.put("/posts/:id/vote-down", function(request, response) {
-  Post.findById(req.params.id).exec(function(err, post) {
+  Post.findById(request.params.id).exec(function(err, post) {
     post.downVotes.push(request.user._id);
     post.voteScore = post.voteScore - 1;
     post.save();
