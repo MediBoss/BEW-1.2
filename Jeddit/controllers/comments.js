@@ -10,15 +10,18 @@ router.post("/posts/:postId/comments", function(request, response){
   comment.author = request.user._id
   comment.save()
     .then( (comment) => {
-      return Post.findById(request.params.postId)
-      response.redirect(`/`)
+      return Promise.all([
+        Post.findById(request.params.postId)
+      ])
     })
-    .then( (post) => {
+    .then( ([post, user]) => {
       post.comments.unshift(comment)
-      return post.save()
+      return Promise.all([
+        post.save()
+      ])
     })
     .then( (post) => {
-      response.redirect(`/`)
+      response.redirect(`/posts/${request.params.postId}`)
     })
     .catch( (error) => {
       console.log(error);

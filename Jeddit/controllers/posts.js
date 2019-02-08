@@ -36,17 +36,16 @@ router.post("/posts/new", (request, response) => {
 
 
 // SHOW SINGLE POST ENDPOINT
-router.get("/posts/:id", (request, response) => {
-
-  var currentUser = request.user
-  Post.findById(request.params.id).populate({ path: 'comments', populate: { path: 'author'}}).populate('author')
-    .then( (post) => {
-      response.render("posts-show", { post, currentUser })
-    })
-    .catch( (error) => {
-      console.log(error.message)
-    })
-})
+router.get("/posts/:id", function (request, response) {
+    var currentUser = request.user;
+    Post.findById(request.params.id).populate('comments').lean()
+        .then(post => {
+            response.render("posts-show", { post, currentUser });
+        })
+        .catch(error => {
+            console.log(error.message);
+        });
+});
 
 // SHOW ALL POSTS ENDPOINT
 router.get("/posts", (request, response) => {
@@ -64,7 +63,7 @@ router.get("/posts", (request, response) => {
 router.get("/n/:subreddit", function(request, response){
 
   var currentUser = request.user
-  Post.find( {subreddit: request.params.subreddit} ).populate("author")
+  Post.find( {subreddit: request.params.subreddit} ).lean()
     .then( (posts) => {
       response.render("posts-index", { posts, currentUser })
     })
