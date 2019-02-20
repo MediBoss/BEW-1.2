@@ -3,7 +3,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const passport = require("./config/passport");
+const mongoose = require("mongoose");
+
 const app = express();
+
+
+mongoose.connect('mongodb://localhost/passportAuthDB', {useNewUrlParser: true});
 
 app.use(bodyParser.urlencoded({
   extended: true
