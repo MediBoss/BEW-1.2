@@ -28,6 +28,7 @@ UserSchema.pre("save", function(next){
  })
 })
 
+// Create a JWT for future Auth
 UserSchema.methods.generateJWT = function() {
 
   return jwt.sign({ _id: this._id, email: this.email}, process.env.SECRET,{
@@ -35,6 +36,7 @@ UserSchema.methods.generateJWT = function() {
   })
 }
 
+// Return the user object in JSON format to validate that the user was created
 UserSchema.methods.toPrettyJSON = function() {
   return {
     _id: this._id,

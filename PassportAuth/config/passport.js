@@ -11,28 +11,31 @@ passport.use(new LocalStrategy({
 
   function (email, password, done) {
     // TODO: Replace this object with a mongoose User model.
-    User.findOne({ email: email })
-      .then((user) => {
-        if (!user && !user.validPassword(password)) {
-          return done(null, false, {
-            message: "Incorrect email and/or password"
-          });
-        }
-        console.log(user);
-        return done(null, user);
-      }).catch(done)
+    User.findOne({ email: email }, function(err, user){
+
+      if (err) { return done(err) }
+
+      if (!user && !user.validPassword(password)) {
+        return done(null, false, {
+          message: "Incorrect email and/or password"
+        });
+      }
+      console.log(user);
+      return done(null, user);
+    })
   }));
 
 passport.serializeUser(function (user, cb) {
-  console.log("The user is " + user);
+
   cb(null, user._id);
 });
 
 passport.deserializeUser(function (obj, cb) {
   // TODO: return an instance of a Mongoose User model.
-  console.log("The Object is " + obj);
-  cb(null, obj);
-});
+  User.findById(obj._id, function(err, user){
+    cb(err, user)
+  })
+})
 
 // Export our auth configuration.
 module.exports = passport;

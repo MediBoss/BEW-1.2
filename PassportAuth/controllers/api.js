@@ -3,44 +3,63 @@ var passport = require("../config/passport");
 var User = require("../models/user")
 
 module.exports = function (app) {
-  // Using the passport.authenticate middleware with our local strategy.
-  // If the user has valid login credentials, send them to the members page.
-  // Otherwise the user will be sent an error
+
   app.post("/api/login", passport.authenticate("local"), function (req, res) {
-    // Since we're doing a POST with javascript, we can't actually redirect that post into a GET request
-    // So we're sending the user back the route to the members page because the redirect will happen on the front end
-    // They won't get this or even be able to access this page if they aren't authed
-    const email = req.body.email
-    const password = req.body.password
 
-
-
-
-    res.json({
-      "message1": "Logged in successfully!"
-    });
-  });
-
-  app.post("/api/signup", function (req, res) {
     const user = req.body
-
+    // Check if the user did not provide an email
     if(!user.email){
       return res.status(422).json({ errors: {
         email: "is required"
       }})
     }
 
+    // Check if the user did not provide an email
     if(!user.password){
-      return res.send(422).json({ errors: {
+      return res.status(422).json({ errors: {
         password: "is required"
       }})
     }
 
-    const authenticatedUsed = new User(user)
+    return passport.authenticate('local', { session: false}, (err, authedUser, info) => {
+      if (err){
+        return res.status(401).json({ errors: "Your Email or Password is incorrect"})
+      }
 
+      if(authedUser){
+        const user = authedUser
+        user.token = authedUser.generateJWT()
+
+        return res.json({ user: user.toPrettyJSON() })
+      }
+
+      res.status(400).info
+    })
+  });
+
+
+  app.post("/api/signup", function (req, res) {
+    const user = req.body
+    // Check if the user did not provide an email
+    if(!user.email){
+      return res.status(422).json({ errors: {
+        email: "is required"
+      }})
+    }
+
+    // Check if the user did not provide an email
+    if(!user.password){
+      return res.status(422).json({ errors: {
+        password: "is required"
+      }})
+    }
+
+    // save the user and return a JSON reponse of the user object with a 200 status code
+    const authenticatedUsed = new User(user)
     return authenticatedUsed.save()
-      .then( () => res.json( { user: authenticatedUsed.toPrettyJSON() }))
+      .then( () => res.status(200).json( { user: authenticatedUsed.toPrettyJSON() }))
   })
+
 
   app.get("/api/logout", function (req, res) {
     req.logout();
