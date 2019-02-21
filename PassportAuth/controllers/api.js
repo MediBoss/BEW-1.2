@@ -1,5 +1,6 @@
 // Make sure to import the Passport config:
 var passport = require("../config/passport");
+var User = require("../models/user")
 
 module.exports = function (app) {
   // Using the passport.authenticate middleware with our local strategy.
@@ -9,15 +10,38 @@ module.exports = function (app) {
     // Since we're doing a POST with javascript, we can't actually redirect that post into a GET request
     // So we're sending the user back the route to the members page because the redirect will happen on the front end
     // They won't get this or even be able to access this page if they aren't authed
+    const email = req.body.email
+    const password = req.body.password
+
+
+
+
     res.json({
       "message1": "Logged in successfully!"
     });
   });
 
   app.post("/api/signup", function (req, res) {
-    console.log(req.body);
-    res.json(req.body);
-  });
+    const user = req.body
+
+    if(!user.email){
+      return res.status(422).json({ errors: {
+        email: "is required"
+      }})
+    }
+
+    if(!user.password){
+      return res.send(422).json({ errors: {
+        password: "is required"
+      }})
+    }
+
+    const authenticatedUsed = new User(user)
+    authenticatedUsed.setPassword(user.password)
+
+    return authenticatedUsed.save()
+      .then( () => res.json( { user: authenticatedUsed.toPrettyJSON() }))
+  })
 
   app.get("/api/logout", function (req, res) {
     req.logout();

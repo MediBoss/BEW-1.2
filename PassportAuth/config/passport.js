@@ -21,7 +21,7 @@ passport.use(new LocalStrategy({
         console.log(user);
         return done(null, user);
       }).catch(done)
-  })
+  }));
 
 passport.serializeUser(function (user, cb) {
   console.log("The user is " + user);
