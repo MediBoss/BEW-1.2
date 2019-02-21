@@ -37,7 +37,6 @@ module.exports = function (app) {
     }
 
     const authenticatedUsed = new User(user)
-    authenticatedUsed.setPassword(user.password)
 
     return authenticatedUsed.save()
       .then( () => res.json( { user: authenticatedUsed.toPrettyJSON() }))

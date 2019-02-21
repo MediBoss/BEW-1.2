@@ -1,8 +1,9 @@
 //----------------------------------------------------------------
 // This File defines the User Model and its Methods.
 //----------------------------------------------------------------
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
+const mongoose = require("mongoose")
+const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
 const Schema = mongoose.Schema;
 
 // The Schema defined with needed properties to be stored in Mongo
@@ -11,26 +12,37 @@ const UserSchema = new Schema({
   password: {type: String}
 });
 
+UserSchema.pre("save", function(next){
+  // Encrypt and Salt the User's Password
+ const user = this
+ if (!user.isModified("password")) {
+   return next()
+ }
+
+ // Generates a salted and hashed password for the user
+ bcrypt.genSalt(10, (err, salt) => {
+   bcrypt.hash(user.password, salt, (err, hash) => {
+     user.password = hash
+     next()
+   })
+ })
+})
 
 UserSchema.methods.generateJWT = function() {
-  const today = new Date();
-  const expirationDate = new Date(today);
-  expirationDate.setDate(today.getDate() + 60);
 
-  return jwt.sign({
-    email: this.email,
-    id: this._id,
-    exp: parseInt(expirationDate.getTime() / 1000, 10),
-  }, 'secret');
+  return jwt.sign({ _id: this._id, email: this.email}, process.env.SECRET,{
+    expiresIn: "60 days"
+  })
 }
 
 UserSchema.methods.toPrettyJSON = function() {
   return {
     _id: this._id,
     email: this.email,
-    token: this.generateJWT(),
-  };
-};
+    token: this.generateJWT()
+  }
+}
+
 
 
 module.exports = mongoose.model("User", UserSchema);
